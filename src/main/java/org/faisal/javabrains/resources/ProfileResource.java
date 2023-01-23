@@ -32,9 +32,9 @@ public class ProfileResource {
     }
 
     @GET
-    @Path("/{id}")
-    public Response getProfile(@PathParam("id") long id){
-        return buildResponse(profileService.getProfile(id),OK);
+    @Path("/{profileName}")
+    public Response getProfile(@PathParam("profileName") String profileName) {
+        return buildResponse(profileService.getProfile(profileName), OK);
     }
 
     @PUT
@@ -45,9 +45,9 @@ public class ProfileResource {
     }
 
     @DELETE
-    @Path("/{id}")
-    public Response deleteProfile(@PathParam("id") long id) {
-        profileService.deleteProfile(id);
+    @Path("/{profileName}")
+    public Response deleteProfile(@PathParam("profileName") String profileName) {
+        profileService.deleteProfile(profileName);
         return buildResponse(OK);
     }
 

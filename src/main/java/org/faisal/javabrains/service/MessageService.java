@@ -2,11 +2,9 @@ package org.faisal.javabrains.service;
 
 import org.faisal.javabrains.config.DatabaseClass;
 import org.faisal.javabrains.exceptions.DataNotFoundException;
-import org.faisal.javabrains.model.Link;
 import org.faisal.javabrains.model.Message;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
 import java.sql.Date;
 import java.time.Instant;
 import java.util.*;
@@ -34,14 +32,9 @@ public class MessageService {
         else throw new DataNotFoundException(messageId + " Not Found");
     }
 
-    public Message addMessage(Message message, URI path) {
+    public Message addMessage(Message message) {
         message.setId(messages.size() + 1);
         message.setCreated(Date.from(Instant.now()));
-        var links = List.of(
-                new Link(String.format("%s/%d", path, message.getId()), "self"),
-                new Link(String.format("%s/%s", path, message.getAuthor()), "profile"),
-                new Link(String.format("%s/%d/comments", path, message.getId()), "comments"));
-        message.setLinks(links);
         message.setComments(new HashMap<>());
         messages.put(message.getId(), message);
         return messages.get(message.getId());

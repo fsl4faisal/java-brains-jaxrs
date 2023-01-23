@@ -15,7 +15,6 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 @Produces(APPLICATION_JSON)
 @Controller
 public class CommentResource {
-
     @Autowired
     CommentService commentService;
 

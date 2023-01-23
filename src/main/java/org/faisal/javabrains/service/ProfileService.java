@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Service
 public class ProfileService {
-    private Map<Long, Profile> profiles = DatabaseClass.getProfiles();
+    private Map<String, Profile> profiles = DatabaseClass.getProfiles();
 
     public List<Profile> getAllProfiles() {
         return profiles.values().stream().toList();
@@ -21,22 +21,22 @@ public class ProfileService {
     public void createProfile(Profile profile) {
         profile.setId(profiles.size() + 1);
         profile.setCreated(Date.from(Instant.now()));
-        profiles.put(profile.getId(), profile);
+        profiles.put(profile.getProfileName(), profile);
     }
 
     public Profile updateProfile(Profile profile) {
-        return profiles.put(profile.getId(), profile);
+        return profiles.put(profile.getProfileName(), profile);
     }
 
-    public void deleteProfile(long id) {
-        var profile = profiles.get(id);
+    public void deleteProfile(String profileName) {
+        var profile = profiles.get(profileName);
         if (profile != null)
-            profiles.remove(profile.getId());
+            profiles.remove(profile.getProfileName());
     }
 
-    public Profile getProfile(long id) {
-        var profile = profiles.get(id);
+    public Profile getProfile(String profileName) {
+        var profile = profiles.get(profileName);
         if (profile != null) return profile;
-        else throw new DataNotFoundException(String.format("profile with id:%d not found", id));
+        else throw new DataNotFoundException(String.format("profile with profileName:%d not found", profileName));
     }
 }
