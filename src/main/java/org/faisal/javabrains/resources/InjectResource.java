@@ -1,14 +1,16 @@
 package org.faisal.javabrains.resources;
 
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.*;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.UriInfo;
 
 import static jakarta.ws.rs.core.MediaType.TEXT_HTML;
 
 @Path("/injectdemo")
 @Consumes(TEXT_HTML)
 @Produces(TEXT_HTML)
-public class InjectResources {
+public class InjectResource {
 
     @GET
     @Path("annotations")

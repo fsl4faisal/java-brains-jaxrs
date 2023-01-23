@@ -1,13 +1,15 @@
 package org.faisal.javabrains.service;
 
 import org.faisal.javabrains.config.DatabaseClass;
+import org.faisal.javabrains.exceptions.DataNotFoundException;
+import org.faisal.javabrains.model.Link;
 import org.faisal.javabrains.model.Message;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.net.URI;
+import java.sql.Date;
+import java.time.Instant;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static java.util.Calendar.YEAR;
@@ -27,27 +29,33 @@ public class MessageService {
     }
 
     public Message getMessage(long messageId) {
-        return messages.get(messageId);
+        var message = messages.get(messageId);
+        if (message != null) return message;
+        else throw new DataNotFoundException(messageId + " Not Found");
     }
 
-    public Message addMessage(Message message) {
-        messages.put(message.id(),
-                new Message(messages.size() + 1,
-                        message.message(),
-                        message.created(),
-                        message.author()));
-        return messages.get(message.id());
+    public Message addMessage(Message message, URI path) {
+        message.setId(messages.size() + 1);
+        message.setCreated(Date.from(Instant.now()));
+        var links = List.of(
+                new Link(String.format("%s/%d", path, message.getId()), "self"),
+                new Link(String.format("%s/%s", path, message.getAuthor()), "profile"),
+                new Link(String.format("%s/%d/comments", path, message.getId()), "comments"));
+        message.setLinks(links);
+        message.setComments(new HashMap<>());
+        messages.put(message.getId(), message);
+        return messages.get(message.getId());
     }
 
     public Message updateMessage(Message message) {
-        if (message.id() <= 0)
+        if (message.getId() <= 0)
             return null;
-        messages.put(message.id(), message);
+        messages.put(message.getId(), message);
         return message;
     }
 
     public Message removeMessage(Message message) {
-        return messages.remove(message.id());
+        return messages.remove(message.getId());
     }
 
     public List<Message> getAllMessagesForYear(int year) {
@@ -60,7 +68,7 @@ public class MessageService {
 
     private Predicate<Map.Entry<Long, Message>> byYear(int year, Calendar calender) {
         return entry -> {
-            calender.setTime(entry.getValue().created());
+            calender.setTime(entry.getValue().getCreated());
             if (calender.get(YEAR) == year) {
                 return true;
             } else {
